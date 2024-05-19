@@ -178,10 +178,48 @@ modinfo /lib/modules/$(uname -r)/kernel/crypto/des_generic.ko
 ### ¿Qué divers/modulos estan cargados en sus propias pc? comparar las salidas con las computadoras de cada integrante del grupo. Expliquen las diferencias. Carguen un txt con la salida de cada integrante en el repo y pongan un diff en el informe.
 ### ¿cuales no están cargados pero están disponibles? que pasa cuando el driver de un dispositivo no está disponible. 
 ### Correr hwinfo en una pc real con hw real y agregar la url de la información de hw en el reporte. 
+
 ### ¿Qué diferencia existe entre un módulo y un programa  ? 
+
+Un módulo representa un segmento de código independiente, diseñado para ser integrado o removido de un programa o sistema operativo, especialmente en entornos basados en Linux. Un ejemplo prominente es el módulo del kernel, que permite extender de las capacidades del núcleo del sistema sin la necesidad de reiniciar. Estos módulos, comúnmente escritos en C, operan dentro del espacio del kernel, otorgándoles acceso inmediato tanto al hardware como a los recursos del sistema operativo.
+
+En contraste, un programa consiste en una serie de instrucciones que se procesan secuencialmente para cumplir con un objetivo determinado. Este puede manifestarse como una aplicación integral operando bajo un sistema operativo y puede estar desarrollado en idiomas de programación variados, incluyendo C, Python o Java. Estas aplicaciones funcionan dentro del espacio de usuario, lo cual implica que se ejecutan con privilegios restringidos, sin interacción directa con los componentes del sistema o el hardware.
+
 ### ¿Cómo puede ver una lista de las llamadas al sistema que realiza un simple helloworld en c?
+
 ### ¿Que es un segmentation fault? como lo maneja el kernel y como lo hace un programa?
+
+Un segmentation fault es un error que ocurre cuando un programa intenta acceder a una región de  memoria a la que no tiene permiso o que no existe. Este tipo de error generalmente se produce cuando un programa:
+
+1. Intenta leer o escribir en una dirección de memoria fuera del espacio asignado.
+2. Accede a una dirección de memoria que ha sido liberada.
+3. Usa un puntero no inicializado o inválido.
+
+Los segmentation faults son comunes en programas escritos en lenguajes como C y C++, donde el manejo de la memoria es manual.
+
+**Manejo del kernel**
+Cuando un programa intenta acceder a una memoria inválida, el procesador genera una excepción que es capturada por el kernel del sistema operativo y responde emitiendo una señal de violación de segmento __(SIGSEGV)__ al proceso infractor. Esta alerta comunica que se ha producido un intento de acceso a un área restringida de la memoria. Si el proceso en cuestión no está configurado para gestionar esta señal, el kernel procede a finalizarlo para mantener la estabilidad del sistema y evitar comportamientos erráticos. Durante este proceso, puede generarse un archivo de volcado de memoria _(core dump)_, que sirve para analizar posteriormente la causa exacta del error.
+
+El kernel, utilizando sus estructuras de control como las tablas de páginas, supervisa cada solicitud de acceso a la memoria. En caso de que una solicitud contravenga las políticas establecidas en estas tablas, el hardware interviene, creando una interrupción que el kernel interpreta como un segmentation fault, llevando a cabo las acciones correctivas necesarias.
+
+**Manejo de un programa**
+Un programa puede gestionar un Segmentation Fault configurando un manejador de señales para la señal __SIGSEGV__. Esto permite que el programa responda de manera controlada al error, en lugar de terminar abruptamente. Al producirse un Segmentation Fault, es posible que se genere un volcado de memoria _(core dump)_, que contiene información detallada sobre el estado del programa en ese momento. Los desarrolladores utilizan este volcado para identificar y corregir la causa del error. Aunque algunos programas implementan manejadores personalizados para señales como __SIGSEGV__, liberando recursos o registrando el error antes de finalizar, es importante proceder con precaución, ya que el comportamiento tras recibir una señal de __SIGSEGV__ es indefinido según los estándares POSIX.
+
 ### ¿Se animan a intentar firmar un módulo de kernel ? y documentar el proceso ?  https://askubuntu.com/questions/770205/how-to-sign-kernel-modules-with-sign-file
+
 ### Agregar evidencia de la compilación, carga y descarga de su propio módulo imprimiendo el nombre del equipo en los registros del kernel. 
+
 ### ¿Que pasa si mi compañero con secure boot habilitado intenta cargar un módulo firmado por mi? 
 
+Secure Boot es una característica de seguridad proporcionada por UEFI que garantiza que solo el software firmado y confiable se ejecute durante el arranque del sistema. Esto incluye módulos del kernel, asegurando que no han sido alterados ni firmados por entidades no confiables. Esta medida protege contra malware que intenta ejecutarse en las primeras etapas del arranque del sistema.
+
+Si mi compañero tiene Secure Boot habilitado e intenta cargar un módulo firmado por mí, el resultado dependerá de si la firma del módulo es reconocida y confiable para el firmware de Secure Boot. Si el módulo está firmado con una clave reconocida y confiable por el firmware, debería cargarse sin problemas. Sin embargo, si la firma no es reconocida o hay algún problema con la clave, el firmware bloqueará la carga del módulo.
+
+Para que un módulo firmado personalmente sea aceptado por Secure Boot, generalmente se necesita:
+1. Generar una clave privada y un certificado para la firma del módulo
+2. Utilizar la clave privada para firmar el módulo, lo que producie un archivo de firma digital que acompañará al módulo
+3. Registrar el certificado correspondiente a la clave privada en la base de datos de claves de Secure Boot del sistema de mi compañero. Este proceso generalmente requiere acceso al firmware UEFI de su máquina, a menudo a través de una interfaz de usuario de firmware.
+
+Una vez que el certificado está registrado en la base de datos, Secure Boot podrá verificar la firma digital cuando mi compañero intente cargar el módulo. Si la firma es válida y reconocida, el módulo se cargará correctamente; de lo contrario, la carga del módulo fallará.
+
+En algunos casos, puede ser necesario desactivar temporalmente Secure Boot para cargar módulos no firmados o firmados con claves no reconocidas, aunque esto no es recomendable desde una perspectiva de seguridad. Manipular Secure Boot y firmar módulos requiere un conocimiento técnico avanzado y debe hacerse con cuidado para no comprometer la seguridad del sistema. 
