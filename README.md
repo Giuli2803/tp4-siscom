@@ -107,6 +107,21 @@ Para gestionar esto, las CPU operan en diferentes modos, cada uno ofreciendo dif
 Las funciones de una libreria se usan en en modo usuario. Esa funcion luego llama a una o más llamadas al sistema, y estas llamadas al sistema se ejecutan en nombre de la función, pero lo hacen en modo supervisor ya que forman parte del propio kernel. Una vez que la llamada al sistema completa su tarea, devuelve el control y la ejecución vuelve al modo usuario.
 
 ### Espacio de datos y espacio de codigo para usuario y kernel. Riesgos!!
+
+**Espacio de Datos o namespace**: 
+
+Al escribir un programa en C, se utilizan variables que son convenientes y tienen sentido para el lector. Sin embargo, en grandes proyectos, cualquier variable global que será parte de una comunidad de variables globales de otras personas; y algunos nombres de variables pueden entrar en conflicto. En proyectos grandes, se debe hacer un esfuerzo para recordar los nombres reservados y encontrar formas de desarrollar un esquema para nombrar variables y símbolos únicos.
+
+Al escribir código del kernel, incluso el módulo más pequeño se vinculará con todo el kernel, por lo que esto definitivamente es un problema. La mejor manera de abordarlo es declarar todas tus variables como estáticas y utilizar un prefijo bien definido para los símbolos. Por convención, todos los prefijos del kernel están en minúsculas. Otra opción es declarar una tabla de símbolos y registrarla en el kernel.
+
+El archivo /proc/kallsyms contiene todos los símbolos que el kernel conoce y que, por lo tanto, son accesibles para tus módulos ya que comparten el espacio de código del kernel.
+
+**Espacio de Codigo o codespace**:
+
+Cuando se crea un proceso, el kernel reserva una porción de memoria física real y se la entrega al proceso para que la utilice en su código, variables, pila y heap. Esta memoria comienza con 0x00000000 y se extiende hasta donde sea necesario. Dado que el espacio de memoria para dos procesos no se superpone, cada proceso que puede acceder a una dirección de memoria, digamos 0xbffff978, estaría accediendo a una ubicación diferente en la memoria física real ya que esa direccion representa un desplazamiento en el bloque de memoria que se le fue asignado y resulta en una direccion de memoria fisica diferente para cada proceso.
+
+El kernel también tiene su propio espacio de memoria. Dado que un módulo es código que puede ser insertado y eliminado dinámicamente en el kernel, comparte el espacio de código del kernel en lugar de tener el suyo propio. Por lo tanto, si el módulo provoca un segmentation fault, el kernel también lo hará. Y si sobrescribe datos debido a un error (accidental o intencionadamente), entonces se estara pisando datos (o código) del kernel.
+
 ### Drivers. Investigar contenido de /dev.
 
 ## Desafío #3
