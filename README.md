@@ -44,23 +44,98 @@ Otras medidas de seguridad que se pueden implementar:
 - Deshabilitar el acceso a dispositivos USB: Minimiza el vector de ataque restringiendo el uso de dispositivos USB.
 - Implementar auditoría de seguridad: Utiliza un sistema de auditoría para monitorizar y registrar eventos de seguridad del sistema.
 
-## Desafío #2
+## Desafío #2 Modulos vs Programas
 
 enlace: https://sysprog21.github.io/lkmpg/#preliminaries
 
 ### ¿Cómo empiezan y terminan unos y otros ?
+
+Un **programa** típico comienza con una función main(), ejecuta una serie de instrucciones y termina después de completar estas instrucciones. Los módulos del kernel, sin embargo, siguen un patrón diferente. Un **módulo** siempre comienza con la función init_module o con una función designada por la llamada module_init. Esta función actúa como el punto de entrada del módulo, informando al kernel de las funcionalidades del módulo y preparando al kernel para utilizar las funciones del módulo cuando sea necesario. Después de realizar estas tareas, la función de entrada retorna, y el módulo permanece inactivo hasta que el kernel requiera su código.
+
+Todos los módulos concluyen invocando cleanup_module o una función especificada a través de la llamada module_exit. Esto sirve como la función de salida del módulo, revirtiendo las acciones de la función de entrada al anular el registro de las funcionalidades previamente registradas.
+
+Es obligatorio que cada módulo tenga tanto una función de entrada como una de salida.
+
 ### ¿Qué funciones tiene disponible un programa y un módulo ?
 
-Programa: Primero construir un programa que llame a printf(), compilarlo (con opción -Wall y ejecutar strace (strace -tt y strace -c). Explicar lo que se observa.!!
+Un programa puede usar funciones definidas en librerias (como por ejemplo printf de la libreria estandar de C) que luego en el momento del linkeo se agrega al programa.
 
-Modulo: La definición de los símbolos proviene del propio kernel; las únicas funciones externas que puede utilizar un módulo, son las proporcionadas por el kernel. Investigar el contenido del archivo /proc/kallsyms .!!
+Por otro lado, los módulos son archivos de objeto cuyos símbolos se resuelven al ejecutar insmod o modprobe. La definición de los símbolos proviene del propio kernel; las únicas funciones externas que se pueden usar son las proporcionadas por el kernel. 
+
+Se pueden observar los símbolos que han sido exportados por el kernel en /proc/kallsyms:
+![image](https://github.com/marcosraimondi1/tp4-siscom/assets/69517496/57de5f3a-f320-453d-848d-b91f1da496f3)
+
+<small>Se utiliza sudo para poder observar la direccion de memoria de los simbolos, ya que para un usuario no root esa direccion no es visible.</small>
+
+El formato de las entradas es el siguiente: <dirección> <tipo> <nombre_del_símbolo>
+
+- Dirección: La dirección de memoria en la que se encuentra el símbolo.
+- Tipo: Un carácter que indica el tipo de símbolo (por ejemplo, T para una función de texto (código), D para datos, A indica que tiene una direccion absoluta).
+- Nombre del símbolo: El nombre del símbolo exportado
+
+La diferencia entre las funciones de biblioteca y las llamadas al sistema es que las funciones de biblioteca son de nivel superior, se ejecutan completamente en el espacio de usuario y proporcionan una interfaz más conveniente para el programador a las funciones que realizan el trabajo real: las llamadas al sistema. Las llamadas al sistema se ejecutan en modo kernel en nombre del usuario y son proporcionadas por el propio kernel. 
+
+La función de biblioteca printf() puede parecer una función de impresión muy general, pero todo lo que realmente hace es formatear los datos en cadenas y escribir los datos de la cadena usando la llamada al sistema de bajo nivel write(), que luego envía los datos a la salida estándar.
+
+Se utiliza el comando strace para observar las llamadas al sistemas del siguiente programa
+```C
+#include <stdio.h>
+int main(int argc, char *argv[]) {
+printf("hello world\n");
+return 0;
+}
+```
+Salida:
+![image](https://github.com/marcosraimondi1/tp4-siscom/assets/69517496/d3d46d7b-e5c7-4836-9153-96f23e7d84ba)
 
 ### ¿Quien carga los modulos del kernel?
+
+Los módulos del kernel son cargados por el programa insmod o modprobe. Estos son utilitarios de línea de comandos que permiten cargar módulos del kernel en el espacio de kernel en ejecución:
+- **insmod**: Es un comando básico que carga módulos del kernel directamente. Requiere que especifiques la ruta completa del módulo que se desea cargar, así como cualquier argumento adicional que el módulo pueda necesitar.
+- **modprobe**: Es una herramienta más avanzada y versátil que insmod. Además de cargar módulos, modprobe maneja automáticamente las dependencias del módulo, cargando cualquier otro módulo necesario. También proporciona una configuración más flexible y opciones adicionales para la administración de módulos.
+
+Para ejecutar estas funciones se deben llamar con sudo ya que requieren permisos de usuario root.
+
 ### Espacio de usuario vs espacio del kernel.
+
+El kernel principalmente gestiona el acceso a recursos. Los programas compiten frecuentemente por los mismos recursos. El papel del kernel es mantener el orden, asegurando que los usuarios no accedan a los recursos indiscriminadamente.
+
+Para gestionar esto, las CPU operan en diferentes modos, cada uno ofreciendo diferentes niveles de control del sistema. La arquitectura Intel 80386, por ejemplo, contaba con cuatro de estos modos, conocidos como anillos. Sin embargo, Unix utiliza solo dos de estos anillos: el anillo más alto (anillo 0, también conocido como "modo supervisor", donde todas las acciones son permitidas) y el anillo más bajo, conocido como "modo usuario".
+
+![image](https://github.com/marcosraimondi1/tp4-siscom/assets/69517496/4936d16b-d3ba-45a2-8e43-58ec0691bd6d)
+
+Las funciones de una libreria se usan en en modo usuario. Esa funcion luego llama a una o más llamadas al sistema, y estas llamadas al sistema se ejecutan en nombre de la función, pero lo hacen en modo supervisor ya que forman parte del propio kernel. Una vez que la llamada al sistema completa su tarea, devuelve el control y la ejecución vuelve al modo usuario.
+
 ### Espacio de datos y espacio de codigo para usuario y kernel. Riesgos!!
 ### Drivers. Investigar contenido de /dev.
 
 ## Desafío #3
+
+Seguir los siguientes pasos:
+
+1. Compilar y cargar el modulo "mimodulo.ko":
+```sh
+cd part1
+make
+sudo insmod mimodulo.ko
+sudo dmesg
+lsmod | grep mod
+```
+
+2. Quitar modulo:
+```sh
+sudo rmmod mimodulo
+sudo dmsg
+lsmod | grep mod
+
+cat /proc/modules  | grep mod
+```
+
+3. Comparar informacion de modulos
+```sh
+modinfo mimodulo.ko 
+modinfo /lib/modules/$(uname -r)/kernel/crypto/des_generic.ko
+```
 
 ### ¿Qué diferencias se pueden observar entre los dos modinfo ? 
 ### ¿Qué divers/modulos estan cargados en sus propias pc? comparar las salidas con las computadoras de cada integrante del grupo. Expliquen las diferencias. Carguen un txt con la salida de cada integrante en el repo y pongan un diff en el informe.
