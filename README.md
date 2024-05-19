@@ -2,6 +2,8 @@
 
 ## Modulos de Kernel
 
+Un módulo del kernel de Linux es un segmento de código capaz de cargarse y descargarse dinámicamente dentro del kernel según sea necesario. Los módulos mejoran las capacidades del kernel sin necesidad de reiniciar el sistema. Un ejemplo notable se ve en el módulo del controlador de dispositivo (drivers), que facilita la interacción del kernel con los componentes de hardware vinculados al sistema.
+
 ## Desafío #1 
 
 ### ¿Qué es checkinstall y para qué sirve?
