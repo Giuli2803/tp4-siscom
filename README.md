@@ -69,6 +69,7 @@ Un programa puede usar funciones definidas en librerias (como por ejemplo printf
 Por otro lado, los módulos son archivos de objeto cuyos símbolos se resuelven al ejecutar insmod o modprobe. La definición de los símbolos proviene del propio kernel; las únicas funciones externas que se pueden usar son las proporcionadas por el kernel. 
 
 Se pueden observar los símbolos que han sido exportados por el kernel en /proc/kallsyms:
+
 ![image](https://github.com/marcosraimondi1/tp4-siscom/assets/69517496/57de5f3a-f320-453d-848d-b91f1da496f3)
 
 <small>Se utiliza sudo para poder observar la direccion de memoria de los simbolos, ya que para un usuario no root esa direccion no es visible.</small>
@@ -182,8 +183,11 @@ modinfo mimodulo.ko
 modinfo /lib/modules/$(uname -r)/kernel/crypto/des_generic.ko
 ```
 1. mimodulo.ko
+   
    ![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/543bdc44-5aa7-45b6-ae4b-e8679df4f42c)
-2. des_generic.ko
+   
+3. des_generic.ko
+   
    ![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/041c995f-a6dc-4d14-a0c8-eb2d9c6761ea)
    
 ### ¿Qué diferencias se pueden observar entre los dos modinfo ? 
@@ -245,6 +249,30 @@ El kernel, utilizando sus estructuras de control como las tablas de páginas, su
 Un programa puede gestionar un Segmentation Fault configurando un manejador de señales para la señal __SIGSEGV__. Esto permite que el programa responda de manera controlada al error, en lugar de terminar abruptamente. Al producirse un Segmentation Fault, es posible que se genere un volcado de memoria _(core dump)_, que contiene información detallada sobre el estado del programa en ese momento. Los desarrolladores utilizan este volcado para identificar y corregir la causa del error. Aunque algunos programas implementan manejadores personalizados para señales como __SIGSEGV__, liberando recursos o registrando el error antes de finalizar, es importante proceder con precaución, ya que el comportamiento tras recibir una señal de __SIGSEGV__ es indefinido según los estándares POSIX.
 
 ### ¿Se animan a intentar firmar un módulo de kernel ? y documentar el proceso ?  https://askubuntu.com/questions/770205/how-to-sign-kernel-modules-with-sign-file
+
+Para firmar un módulo antes de cargarlo en Linux, puedes seguir estos pasos:
+1. Primero, necesitas generar una clave privada y su correspondiente clave pública:
+
+```sh
+openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -nodes -days 36500 -subj "/CN=MyModuleSignatureKey/"
+```
+2. Luego, necesitas registrar la clave pública con el MOK (Machine Owner Key) en el sistema. Para hacerlo, usa el comando mokutil:
+```sh
+sudo mokutil --import MOK.der
+```
+Esto pedirá que crees una contraseña. Esta contraseña se usará para completar el proceso de inscripción cuando reinicies el sistema.
+3. Reinicia tu máquina. Durante el proceso de arranque, el sistema debería entrar en el modo de inscripción de MOK. Sigue las instrucciones y proporciona la contraseña que configuraste anteriormente para completar la inscripción de la clave pública.
+4. Con la clave privada y pública generadas, ahora puedes firmar tu módulo. Usa el script sign-file proporcionado por el paquete linux-headers.
+```sh
+/usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ./MOK.priv ./MOK.der mimodulo.ko
+```
+5. Finalmente, puedes cargar tu módulo firmado con insmod o modprobe:
+```sh
+sudo insmod mimodulo.ko
+```
+Finalmente obtendremos el modulo firmado:
+
+![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/b2bea3eb-59fa-4d35-aa91-c546d2742b51)
 
 ### Agregar evidencia de la compilación, carga y descarga de su propio módulo imprimiendo el nombre del equipo en los registros del kernel. 
 
