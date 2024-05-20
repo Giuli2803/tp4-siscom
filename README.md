@@ -58,6 +58,10 @@ Todos los módulos concluyen invocando cleanup_module o una función especificad
 
 Es obligatorio que cada módulo tenga tanto una función de entrada como una de salida.
 
+El kernel Linux tiene un diseño modular. Al arrancar, solamente se carga en memoria un kernel residente de pequeño tamaño. Desde ese momento, cada vez que el usuario solicita la ejecucion de una funcion no disponible en el kernel residente, el modulo del kernel se carga dinamicamente en memoria. Despues de un periodo especifico de inactividad, el modulo se puede quitar de la memoria.
+
+El mecanismo que posibilita la carga dinamica de los modulos es un subproceso del kernel denominado kmod. Los modulos no se cargan salvo si se necesitan. Cuando el kernel solicita el uso de un modulo, este se carga junto con todas las dependencias. 
+
 ### ¿Qué funciones tiene disponible un programa y un módulo ?
 
 Un programa puede usar funciones definidas en librerias (como por ejemplo printf de la libreria estandar de C) que luego en el momento del linkeo se agrega al programa.
