@@ -12,7 +12,7 @@ CheckInstall es un programa de computadora para Sistemas Operativos Unix-like qu
 
 Los beneficios principales de CheckInstall contra simplemente ejecutar make install es la habilidad de desinstalar el paquete del sistema usando su Sistema de gestión de paquetes, además de poder instalar el paquete resultante en varias computadoras. 
 
-Frecuentemente ocurre que un programa está sólo disponible como código fuente tar.gz (no hay paquete disponible rpm o Debian). En ese caso se debe descargar el paquete fuente, demepaquetarlo y compilarlo manualmente. Sin embargo, muchas veces, no se provee una manera apropiada para desinstalar el programa. La herramienta CheckInstall fue escrita por Felipe Eduardo Sánchez Díaz Durán para resolver este problema. 
+Frecuentemente ocurre que un programa está sólo disponible como código fuente tar.gz (no hay paquete disponible rpm o Debian). En ese caso se debe descargar el paquete fuente, desempaquetarlo y compilarlo manualmente. Sin embargo, muchas veces, no se provee una manera apropiada para desinstalar el programa. La herramienta CheckInstall fue escrita por Felipe Eduardo Sánchez Díaz Durán para resolver este problema. 
 
 En un programa compatible con GNU Autoconf se instala el programa (luego de descargado y desempaquetado el paquete fuente) con la secuencia:
 ```sh
@@ -158,6 +158,9 @@ sudo insmod mimodulo.ko
 sudo dmesg
 lsmod | grep mod
 ```
+![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/007ce7a2-8cbd-4e62-b48f-fa2c7cfe485a)
+
+![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/d1cf08a2-8a74-4e92-9e8b-3fe3e00cecc3)
 
 2. Quitar modulo:
 ```sh
@@ -167,17 +170,39 @@ lsmod | grep mod
 
 cat /proc/modules  | grep mod
 ```
+![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/f9529267-8af6-4e04-86c3-d5cde1db61c2)
 
 3. Comparar informacion de modulos
 ```sh
 modinfo mimodulo.ko 
 modinfo /lib/modules/$(uname -r)/kernel/crypto/des_generic.ko
 ```
-
+1. mimodulo.ko
+   ![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/543bdc44-5aa7-45b6-ae4b-e8679df4f42c)
+2. des_generic.ko
+   ![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/041c995f-a6dc-4d14-a0c8-eb2d9c6761ea)
+   
 ### ¿Qué diferencias se pueden observar entre los dos modinfo ? 
+
+El modulo de desgeneric.ko tiene asignados varios Alias, sig_id, signer, sig_key, sig_hashalgo y signature, con las cuales no cuenta mimodulo.ko.  
+
 ### ¿Qué divers/modulos estan cargados en sus propias pc? comparar las salidas con las computadoras de cada integrante del grupo. Expliquen las diferencias. Carguen un txt con la salida de cada integrante en el repo y pongan un diff en el informe.
+Ejecutando el siguiente comando obtenemos los modulos cargados en la computadora de cada uno de los integrantes:
+```sh
+lsmod > modules_list.txt
+```
 ### ¿cuales no están cargados pero están disponibles? que pasa cuando el driver de un dispositivo no está disponible. 
+
+Cuando un driver de un dispositivo no está disponible en un sistema Linux, ocurre que el dispositivo no funcionará correctamente haciendo que el sistema operativo no pueda comunicarse con el hardware del dispositivo, lo que resulta en la falta de funcionalidad del dispositivo. Tambien el sistema puede no reconocer el dispositivo en absoluto, lo que significa que no aparecerá en la lista de dispositivos del sistema (lspci, lsusb, etc.).
+
 ### Correr hwinfo en una pc real con hw real y agregar la url de la información de hw en el reporte. 
+Ejecutando los siguientes comandos obtenemos el reporte del hardware en la computadora:
+
+```sh
+sudo apt-get install hwinfo
+sudo hwinfo --all > hwinfo_report.txt
+```
+Los reportes se encuentran disponibles en la carpeta hwinfo_integrantes
 
 ### ¿Qué diferencia existe entre un módulo y un programa  ? 
 
@@ -186,6 +211,16 @@ Un módulo representa un segmento de código independiente, diseñado para ser i
 En contraste, un programa consiste en una serie de instrucciones que se procesan secuencialmente para cumplir con un objetivo determinado. Este puede manifestarse como una aplicación integral operando bajo un sistema operativo y puede estar desarrollado en idiomas de programación variados, incluyendo C, Python o Java. Estas aplicaciones funcionan dentro del espacio de usuario, lo cual implica que se ejecutan con privilegios restringidos, sin interacción directa con los componentes del sistema o el hardware.
 
 ### ¿Cómo puede ver una lista de las llamadas al sistema que realiza un simple helloworld en c?
+Esta información se puede obtener de la siguiente forma:
+
+```sh
+cd checkinstall
+make
+strace ./hello
+```
+Se utiliza el comando strace para observar las llamadas al sistemas del siguiente programa:
+
+![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/90f2aaaf-f568-46a5-8453-c27b3a247787)
 
 ### ¿Que es un segmentation fault? como lo maneja el kernel y como lo hace un programa?
 
