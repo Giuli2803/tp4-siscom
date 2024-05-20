@@ -242,6 +242,26 @@ Un programa puede gestionar un Segmentation Fault configurando un manejador de s
 
 ### ¿Se animan a intentar firmar un módulo de kernel ? y documentar el proceso ?  https://askubuntu.com/questions/770205/how-to-sign-kernel-modules-with-sign-file
 
+Para firmar un módulo antes de cargarlo en Linux, puedes seguir estos pasos:
+1. Primero, necesitas generar una clave privada y su correspondiente clave pública:
+
+```sh
+openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -nodes -days 36500 -subj "/CN=MyModuleSignatureKey/"
+```
+2. Luego, necesitas registrar la clave pública con el MOK (Machine Owner Key) en el sistema. Para hacerlo, usa el comando mokutil:
+```sh
+sudo mokutil --import MOK.der
+```
+Esto pedirá que crees una contraseña. Esta contraseña se usará para completar el proceso de inscripción cuando reinicies el sistema.
+3. Reinicia tu máquina. Durante el proceso de arranque, el sistema debería entrar en el modo de inscripción de MOK. Sigue las instrucciones y proporciona la contraseña que configuraste anteriormente para completar la inscripción de la clave pública.
+4. Con la clave privada y pública generadas, ahora puedes firmar tu módulo. Usa el script sign-file proporcionado por el paquete linux-headers.
+```sh
+/usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ./MOK.priv ./MOK.der mimodulo.ko
+```
+5. Finalmente, puedes cargar tu módulo firmado con insmod o modprobe:
+```sh
+sudo insmod mimodulo.ko
+```
 ### Agregar evidencia de la compilación, carga y descarga de su propio módulo imprimiendo el nombre del equipo en los registros del kernel. 
 
 ### ¿Que pasa si mi compañero con secure boot habilitado intenta cargar un módulo firmado por mi? 
