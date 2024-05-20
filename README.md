@@ -65,6 +65,7 @@ Un programa puede usar funciones definidas en librerias (como por ejemplo printf
 Por otro lado, los módulos son archivos de objeto cuyos símbolos se resuelven al ejecutar insmod o modprobe. La definición de los símbolos proviene del propio kernel; las únicas funciones externas que se pueden usar son las proporcionadas por el kernel. 
 
 Se pueden observar los símbolos que han sido exportados por el kernel en /proc/kallsyms:
+
 ![image](https://github.com/marcosraimondi1/tp4-siscom/assets/69517496/57de5f3a-f320-453d-848d-b91f1da496f3)
 
 <small>Se utiliza sudo para poder observar la direccion de memoria de los simbolos, ya que para un usuario no root esa direccion no es visible.</small>
@@ -178,8 +179,11 @@ modinfo mimodulo.ko
 modinfo /lib/modules/$(uname -r)/kernel/crypto/des_generic.ko
 ```
 1. mimodulo.ko
+   
    ![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/543bdc44-5aa7-45b6-ae4b-e8679df4f42c)
-2. des_generic.ko
+   
+3. des_generic.ko
+   
    ![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/041c995f-a6dc-4d14-a0c8-eb2d9c6761ea)
    
 ### ¿Qué diferencias se pueden observar entre los dos modinfo ? 
@@ -262,6 +266,10 @@ Esto pedirá que crees una contraseña. Esta contraseña se usará para completa
 ```sh
 sudo insmod mimodulo.ko
 ```
+Finalmente obtendremos el modulo firmado:
+
+![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/b2bea3eb-59fa-4d35-aa91-c546d2742b51)
+
 ### Agregar evidencia de la compilación, carga y descarga de su propio módulo imprimiendo el nombre del equipo en los registros del kernel. 
 
 ### ¿Que pasa si mi compañero con secure boot habilitado intenta cargar un módulo firmado por mi? 
