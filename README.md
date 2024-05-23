@@ -170,7 +170,7 @@ lsmod | grep mod
 2. Quitar modulo:
 ```sh
 sudo rmmod mimodulo
-sudo dmsg
+sudo dmesg
 lsmod | grep mod
 
 cat /proc/modules  | grep mod
@@ -275,6 +275,11 @@ Finalmente obtendremos el modulo firmado:
 ![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/b2bea3eb-59fa-4d35-aa91-c546d2742b51)
 
 ### Agregar evidencia de la compilación, carga y descarga de su propio módulo imprimiendo el nombre del equipo en los registros del kernel. 
+
+Se muestra en la siguiente imagen la compilacion y carga y descarga del modulo, modificado para que imprima el nombre del equipo "Las neuronas de bajo consumo" al cargarse el modulo.
+
+![image](https://github.com/marcosraimondi1/tp4-siscom/assets/69517496/31d936de-80ed-4f9f-9b63-8dd9c17480c7)
+
 
 ### ¿Que pasa si mi compañero con secure boot habilitado intenta cargar un módulo firmado por mi? 
 
