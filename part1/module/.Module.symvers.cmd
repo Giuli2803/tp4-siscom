@@ -1,1 +1,0 @@
-cmd_/home/oem/Desktop/TP4/tp4-siscom/part1/module/Module.symvers := sed 's/\.ko$$/\.o/' /home/oem/Desktop/TP4/tp4-siscom/part1/module/modules.order | scripts/mod/modpost -m -a  -o /home/oem/Desktop/TP4/tp4-siscom/part1/module/Module.symvers -e -i Module.symvers   -T -

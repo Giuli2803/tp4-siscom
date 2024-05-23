@@ -1,1 +1,0 @@
-cmd_/home/oem/Desktop/TP4/tp4-siscom/part1/module/mimodulo.ko := ld -r -m elf_x86_64 -z noexecstack --build-id=sha1  -T scripts/module.lds -o /home/oem/Desktop/TP4/tp4-siscom/part1/module/mimodulo.ko /home/oem/Desktop/TP4/tp4-siscom/part1/module/mimodulo.o /home/oem/Desktop/TP4/tp4-siscom/part1/module/mimodulo.mod.o;  true
