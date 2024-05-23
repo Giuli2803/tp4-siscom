@@ -7,7 +7,7 @@ MODULE_AUTHOR("Catedra de SdeC");
 /* Función que se invoca cuando se carga el módulo en el kernel */
 int modulo_lin_init(void)
 {
-	printk(KERN_INFO "Modulo cargado en el kernel.\n");
+	printk(KERN_INFO "Modulo cargado por las NEURONAS DE BAJO CONSUMO.\n");
 
 	/* Devolver 0 para indicar una carga correcta del módulo */
 	return 0;
@@ -16,7 +16,7 @@ int modulo_lin_init(void)
 /* Función que se invoca cuando se descarga el módulo del kernel */
 void modulo_lin_clean(void)
 {
-	printk(KERN_INFO "Modulo descargado del kernel.\n");
+	printk(KERN_INFO "Modulo descargado por las NEURONAS DE BAJO CONSUMO.\n");
 }
 
 /* Declaración de funciones init y exit */
