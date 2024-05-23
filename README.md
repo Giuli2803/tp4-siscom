@@ -199,9 +199,23 @@ Ejecutando el siguiente comando obtenemos los modulos cargados en la computadora
 ```sh
 lsmod > modules_list.txt
 ```
+
+Se genera un archivo modules_list_diff.txt comparando las tres salidas:
+```sh
+diff3 modules_list_marcos.txt modules_list_giuli.txt modules_list_andy.txt > modules_list_diff.txt
+```
+
+Para una visualizacion mas clara, se utiliza el comando vimdiff, que ofrece una salida grafica:
+
+![image](https://github.com/marcosraimondi1/tp4-siscom/assets/69517496/3f05085d-a2e5-4e26-9d45-680e116bbfd2)
+
+Se observa que se comparten unos cuantos modulos, como por ejemplo sha1_ssse3, que ofrece algoritmos de hashing SHA1.
+
+
 ### ¿cuales no están cargados pero están disponibles? que pasa cuando el driver de un dispositivo no está disponible. 
 
 Cuando un driver de un dispositivo no está disponible en un sistema Linux, ocurre que el dispositivo no funcionará correctamente haciendo que el sistema operativo no pueda comunicarse con el hardware del dispositivo, lo que resulta en la falta de funcionalidad del dispositivo. Tambien el sistema puede no reconocer el dispositivo en absoluto, lo que significa que no aparecerá en la lista de dispositivos del sistema (lspci, lsusb, etc.).
+
 
 ### Correr hwinfo en una pc real con hw real y agregar la url de la información de hw en el reporte. 
 Ejecutando los siguientes comandos obtenemos el reporte del hardware en la computadora:
@@ -210,7 +224,7 @@ Ejecutando los siguientes comandos obtenemos el reporte del hardware en la compu
 sudo apt-get install hwinfo
 sudo hwinfo --all > hwinfo_report.txt
 ```
-Los reportes se encuentran disponibles en la carpeta hwinfo_integrantes
+Los reportes se encuentran disponibles en la carpeta hwinfo
 
 ### ¿Qué diferencia existe entre un módulo y un programa  ? 
 
