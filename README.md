@@ -175,7 +175,9 @@ lsmod | grep mod
 
 cat /proc/modules  | grep mod
 ```
-![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/f9529267-8af6-4e04-86c3-d5cde1db61c2)
+![Image_1](https://github.com/marcosraimondi1/tp4-siscom/assets/66461191/d997b23d-fe33-48b4-ae56-5af890a0d7f5)
+
+![Image 2](https://github.com/marcosraimondi1/tp4-siscom/assets/66461191/f41a98ae-6cae-4fad-b842-83aa43903709)
 
 3. Comparar informacion de modulos
 ```sh
@@ -199,23 +201,9 @@ Ejecutando el siguiente comando obtenemos los modulos cargados en la computadora
 ```sh
 lsmod > modules_list.txt
 ```
-
-Se genera un archivo modules_list_diff.txt comparando las tres salidas:
-```sh
-diff3 modules_list_marcos.txt modules_list_giuli.txt modules_list_andy.txt > modules_list_diff.txt
-```
-
-Para una visualizacion mas clara, se utiliza el comando vimdiff, que ofrece una salida grafica:
-
-![image](https://github.com/marcosraimondi1/tp4-siscom/assets/69517496/3f05085d-a2e5-4e26-9d45-680e116bbfd2)
-
-Se observa que se comparten unos cuantos modulos, como por ejemplo sha1_ssse3, que ofrece algoritmos de hashing SHA1.
-
-
 ### ¿cuales no están cargados pero están disponibles? que pasa cuando el driver de un dispositivo no está disponible. 
 
 Cuando un driver de un dispositivo no está disponible en un sistema Linux, ocurre que el dispositivo no funcionará correctamente haciendo que el sistema operativo no pueda comunicarse con el hardware del dispositivo, lo que resulta en la falta de funcionalidad del dispositivo. Tambien el sistema puede no reconocer el dispositivo en absoluto, lo que significa que no aparecerá en la lista de dispositivos del sistema (lspci, lsusb, etc.).
-
 
 ### Correr hwinfo en una pc real con hw real y agregar la url de la información de hw en el reporte. 
 Ejecutando los siguientes comandos obtenemos el reporte del hardware en la computadora:
@@ -224,7 +212,7 @@ Ejecutando los siguientes comandos obtenemos el reporte del hardware en la compu
 sudo apt-get install hwinfo
 sudo hwinfo --all > hwinfo_report.txt
 ```
-Los reportes se encuentran disponibles en la carpeta hwinfo
+Los reportes se encuentran disponibles en la carpeta hwinfo_integrantes
 
 ### ¿Qué diferencia existe entre un módulo y un programa  ? 
 
@@ -275,7 +263,9 @@ openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.d
 sudo mokutil --import MOK.der
 ```
 Esto pedirá que crees una contraseña. Esta contraseña se usará para completar el proceso de inscripción cuando reinicies el sistema.
+
 3. Reinicia tu máquina. Durante el proceso de arranque, el sistema debería entrar en el modo de inscripción de MOK. Sigue las instrucciones y proporciona la contraseña que configuraste anteriormente para completar la inscripción de la clave pública.
+
 4. Con la clave privada y pública generadas, ahora puedes firmar tu módulo. Usa el script sign-file proporcionado por el paquete linux-headers.
 ```sh
 /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ./MOK.priv ./MOK.der mimodulo.ko
@@ -284,16 +274,15 @@ Esto pedirá que crees una contraseña. Esta contraseña se usará para completa
 ```sh
 sudo insmod mimodulo.ko
 ```
-Finalmente obtendremos el modulo firmado:
+Finalmente obtendremos el modulo firmado y compilado:
 
 ![image](https://github.com/Giuli2803/tp4-siscom/assets/66461191/b2bea3eb-59fa-4d35-aa91-c546d2742b51)
 
 ### Agregar evidencia de la compilación, carga y descarga de su propio módulo imprimiendo el nombre del equipo en los registros del kernel. 
 
-Se muestra en la siguiente imagen la compilacion y carga y descarga del modulo, modificado para que imprima el nombre del equipo "Las neuronas de bajo consumo" al cargarse el modulo.
+Se muestra en la siguiente imagen la carga y descarga del modulo, modificado para que imprima el nombre del equipo "Las neuronas de bajo consumo" al cargarse el modulo. Esto se puede ver cuando el modulo se instala o tambien cuando se desintala utilizando el comando "sudo dmesg":
 
-![image](https://github.com/marcosraimondi1/tp4-siscom/assets/69517496/31d936de-80ed-4f9f-9b63-8dd9c17480c7)
-
+![3](https://github.com/marcosraimondi1/tp4-siscom/assets/66461191/2356fbac-a1ca-449c-baed-093bf9d4a618)
 
 ### ¿Que pasa si mi compañero con secure boot habilitado intenta cargar un módulo firmado por mi? 
 
